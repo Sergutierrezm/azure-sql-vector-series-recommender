@@ -1,0 +1,62 @@
+[
+  {
+    "title": "Dark",
+    "genre": "Sci-Fi",
+    "year": 2017,
+    "synopsis": "La desaparición de un niño en un pequeño pueblo alemán desvela secretos oscuros, portales en cuevas y conexiones con viajes en el tiempo a través de tres generaciones."
+  },
+  {
+    "title": "The Expanse",
+    "genre": "Sci-Fi",
+    "year": 2015,
+    "synopsis": "En un futuro donde el sistema solar está colonizado, la desaparición de una mujer une a un detective espacial y al capitán de un carguero en una conspiración política masiva."
+  },
+  {
+    "title": "Severance",
+    "genre": "Sci-Fi",
+    "year": 2022,
+    "synopsis": "Un grupo de empleados de una misteriosa corporación se somete a un procedimiento quirúrgico para separar sus recuerdos laborales de sus recuerdos personales."
+  },
+  {
+    "title": "Mindhunter",
+    "genre": "Thriller",
+    "year": 2017,
+    "synopsis": "Agentes del FBI a finales de los años 70 entrevistan a asesinos en serie encarcelados para entender sus mentes y desarrollar perfiles criminales modernos."
+  },
+  {
+    "title": "True Detective",
+    "genre": "Thriller",
+    "year": 2014,
+    "synopsis": "Investigaciones policiales oscuras que profundizan en los secretos de los detectives y los crímenes rituales que persiguen a lo largo de décadas."
+  },
+  {
+    "title": "Chernobyl",
+    "genre": "Drama",
+    "year": 2019,
+    "synopsis": "Dramatización del desastre nuclear de 1986 en la Unión Soviética y los sacrificios de científicos y trabajadores para contener una catástrofe sin precedentes."
+  },
+  {
+    "title": "The Bear",
+    "genre": "Drama",
+    "year": 2022,
+    "synopsis": "Un joven chef de alta cocina regresa a Chicago para dirigir la bocatería familiar tras una tragedia, enfrentándose a deudas, caos en la cocina y trauma personal."
+  },
+  {
+    "title": "Succession",
+    "genre": "Drama",
+    "year": 2018,
+    "synopsis": "Los cuatro hijos de un implacable magnate de los medios de comunicación luchan ferozmente por tomar el control de la empresa familiar cuando la salud del padre flaquea."
+  },
+  {
+    "title": "Ted Lasso",
+    "genre": "Comedy",
+    "year": 2020,
+    "synopsis": "Un entrenador de fútbol americano universitario es contratado para entrenar a un equipo de fútbol profesional en Inglaterra a pesar de no saber nada sobre el deporte."
+  },
+  {
+    "title": "Silicon Valley",
+    "genre": "Comedy",
+    "year": 2014,
+    "synopsis": "Un programador tímido crea un algoritmo de compresión revolucionario y debe navegar por la avaricia y la feroz competencia de la industria tecnológica."
+  }
+]
