@@ -1,0 +1,18 @@
+# Entornos virtuales
+venv/
+.venv/
+
+# Credenciales y variables de entorno (Vital para no subir tu contraseña de Azure)
+.env
+*.env
+
+# Archivos compilados de caché de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos ocultos de macOS
+.DS_Store
+
+# Configuración local del editor
+.vscode/
