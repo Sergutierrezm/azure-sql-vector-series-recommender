@@ -2,12 +2,18 @@ import json
 from pathlib import Path
 import pyodbc
 import requests
+import os
+
+from dotenv import load_dotenv
+
+# Carga las variables ocultas del archivo .env
+load_dotenv()
 
 # --- Configuración de Azure SQL y Ollama ---
-AZURE_SERVER = 'sql-server-sergio-dp800.database.windows.net'
-AZURE_DATABASE = 'TVShowDB'
-AZURE_USER = 'admiuser'
-AZURE_PASSWORD = '12345Guti'  
+AZURE_SERVER = os.getenv('AZURE_SERVER')
+AZURE_DATABASE = os.getenv('AZURE_DATABASE')
+AZURE_USER = os.getenv('AZURE_USER')
+AZURE_PASSWORD = os.getenv('AZURE_PASSWORD')
 
 OLLAMA_URL = 'http://localhost:11434/api/embeddings'
 OLLAMA_MODEL = 'nomic-embed-text' 
