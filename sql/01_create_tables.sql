@@ -1,12 +1,3 @@
-USE master;
-GO
-
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'TVShowDB')
-BEGIN
-    CREATE DATABASE TVShowDB;
-END;
-GO
-
 USE TVShowDB;
 GO
 
@@ -30,7 +21,7 @@ CREATE TABLE dbo.ShowsHistory (
 );
 GO
 
--- 2. Tabla Principal de Series (Compatible con Azure SQL Database)
+-- 2. Tabla Principal de Series (Vector JSON + Temporal Table)
 CREATE TABLE dbo.Shows (
     ShowID INT IDENTITY(1,1) PRIMARY KEY,
     Title NVARCHAR(100) NOT NULL,
