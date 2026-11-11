@@ -47,25 +47,37 @@ def main():
     with open(JSON_PATH, 'r', encoding='utf-8') as f:
         shows_data = json.load(f)
 
-    print('🔌 Despertando y conectando a Azure SQL Database...')
+    print('🔌 Conectando a Azure SQL Database...')
     conn = pyodbc.connect(CONN_STR)
     cursor = conn.cursor()
 
     for show in shows_data:
-        print(f"🧠 Generando embedding para: '{show['title']}'...")
+        title = show['title']
+        
+        # 1. Comprobamos si la serie ya existe en la base de datos
+        cursor.execute("SELECT COUNT(1) FROM dbo.Shows WHERE Title = ?", title)
+        exists = cursor.fetchone()[0]
+
+        if exists > 0:
+            print(f"⏭️ La serie '{title}' ya existe en la base de datos. Saltando...")
+            continue
+
+        # 2. Si no existe, generamos el embedding y la insertamos
+        print(f"🧠 Generando embedding para nueva serie: '{title}'...")
         vector = get_embedding(show['synopsis'])
         vector_json = json.dumps(vector)
 
-        print(f"💾 Insertando '{show['title']}' en Azure SQL...")
+        print(f"💾 Insertando '{title}' en Azure SQL...")
         cursor.execute("""
             INSERT INTO dbo.Shows (Title, Genre, ReleaseYear, Synopsis, EmbeddingJson)
             VALUES (?, ?, ?, ?, ?)
-        """, show['title'], show['genre'], show['year'], show['synopsis'], vector_json)
+        """, title, show['genre'], show['year'], show['synopsis'], vector_json)
+        
+        conn.commit()
 
-    conn.commit()
     cursor.close()
     conn.close()
-    print('✅ ¡Completado! Las 10 series de shows.json y sus vectores están en Azure SQL.')
+    print('✅ ¡Proceso de sincronización completado sin duplicados!')
 
 if __name__ == '__main__':
     main()

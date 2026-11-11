@@ -58,5 +58,245 @@
     "genre": "Comedy",
     "year": 2014,
     "synopsis": "Un programador tímido crea un algoritmo de compresión revolucionario y debe navegar por la avaricia y la feroz competencia de la industria tecnológica."
+  },
+  {
+    "title": "Breaking Bad",
+    "genre": "Drama",
+    "year": 2008,
+    "synopsis": "Un profesor de química de instituto diagnosticado con cáncer de pulmón inoperable se une a un exalumno para fabricar y vender metanfetamina con el fin de asegurar el futuro financiero de su familia."
+  },
+  {
+    "title": "Better Call Saul",
+    "genre": "Drama",
+    "year": 2015,
+    "synopsis": "Los juicios y tribulaciones del abogado Jimmy McGill en los años previos a convertirse en el turbio asesor legal de Walter White en Albuquerque."
+  },
+  {
+    "title": "Game of Thrones",
+    "genre": "Fantasy",
+    "year": 2011,
+    "synopsis": "Nueve familias nobles luchan por control de las tierras míticas de Westeros, mientras un antiguo enemigo olvidado regresa tras miles de años."
+  },
+  {
+    "title": "House of the Dragon",
+    "genre": "Fantasy",
+    "year": 2022,
+    "synopsis": "La historia de la Casa Targaryen ambientada 200 años antes de los eventos de Juego de Tronos, marcada por la sangrienta guerra civil conocida como la Danza de los Dragones."
+  },
+  {
+    "title": "The Wire",
+    "genre": "Crime",
+    "year": 2002,
+    "synopsis": "Una visión cruda y realista del tráfico de drogas, el sistema judicial, la política, la educación y los medios de comunicación en la ciudad de Baltimore."
+  },
+  {
+    "title": "The Sopranos",
+    "genre": "Crime",
+    "year": 1999,
+    "synopsis": "Un jefe de la mafia de Nueva Jersey lidia con problemas personales y profesionales en su hogar y negocio que afectan su estado mental, obligándole a buscar ayuda psiquiátrica."
+  },
+  {
+    "title": "Peaky Blinders",
+    "genre": "Crime",
+    "year": 2013,
+    "synopsis": "Una notoria banda criminal en Birmingham, Inglaterra, en 1919, está liderada por el feroz Tommy Shelby y enfocada en ascender en el mundo a cualquier precio."
+  },
+  {
+    "title": "Fargo",
+    "genre": "Thriller",
+    "year": 2014,
+    "synopsis": "Varias historias cronológicas de crímenes reales simulados en diferentes épocas de Minnesota, donde personajes corrientes se ven arrastrados a situaciones absurdas y violentas."
+  },
+  {
+    "title": "Narcos",
+    "genre": "Crime",
+    "year": 2015,
+    "synopsis": "La verdadera historia de los poderosos y violentos carteles de la droga colombianos y los esfuerzos de las fuerzas de la ley para acabar con figuras como Pablo Escobar."
+  },
+  {
+    "title": "Sherlock",
+    "genre": "Mystery",
+    "year": 2010,
+    "synopsis": "Una versión actualizada del famoso detective de Arthur Conan Doyle y su compañero el doctor Watson resolviendo crímenes complejos en el Londres del siglo XXI."
+  },
+  {
+    "title": "Dexter",
+    "genre": "Crime",
+    "year": 2006,
+    "synopsis": "Un forense especializado en salpicaduras de sangre para la policía de Miami lleva una doble vida secreta como un asesino en serie justiciero que caza criminales impunes."
+  },
+  {
+    "title": "Lost",
+    "genre": "Sci-Fi",
+    "year": 2004,
+    "synopsis": "Los supervivientes de un accidente aéreo comercial en una misteriosa isla tropical del Pacífico sur deben trabajar juntos para mantenerse con vida mientras descubren secretos extraños."
+  },
+  {
+    "title": "Interstellar (The Series - Concept)",
+    "genre": "Sci-Fi",
+    "year": 2023,
+    "synopsis": "Exploradores espaciales cruzan un agujero de gusano en busca de un nuevo hogar para la humanidad ante el colapso ambiental de la Tierra."
+  },
+  {
+    "title": "Westworld",
+    "genre": "Sci-Fi",
+    "year": 2016,
+    "synopsis": "Un parque de atracciones futurista poblado por androides hiperrealistas donde los visitantes pueden dar rienda suelta a sus fantasías, hasta que los robots comienzan a desarrollar conciencia."
+  },
+  {
+    "title": "Black Mirror",
+    "genre": "Sci-Fi",
+    "year": 2011,
+    "synopsis": "Antología de episodios autoconclusivos que exploran las consecuencias oscuras, retorcidas y distópicas de la tecnología avanzada en la sociedad moderna."
+  },
+  {
+    "title": "The Mandalorian",
+    "genre": "Sci-Fi",
+    "year": 2019,
+    "synopsis": "Las aventuras de un cazarrecompensas solitario en los confines de la galaxia, lejos de la autoridad de la Nueva República, protegiendo a una criatura misteriosa."
+  },
+  {
+    "title": "Andor",
+    "genre": "Sci-Fi",
+    "year": 2022,
+    "synopsis": "El viaje de Cassian Andor hacia el descubrimiento de su papel en la rebelión contra el Imperio Galáctico en un thriller de espionaje crudo y realista."
+  },
+  {
+    "title": "Arcane",
+    "genre": "Animation",
+    "year": 2021,
+    "synopsis": "En medio del conflicto entre las ciudades gemelas de Piltover y Zaun, dos hermanas luchan en bandos opuestos de una guerra entre tecnologías mágicas y convicciones."
+  },
+  {
+    "title": "Attack on Titan",
+    "genre": "Animation",
+    "year": 2013,
+    "synopsis": "La humanidad vive confinada dentro de enormes muros para protegerse de gigantes devoradores de hombres conocidos como Titanes, hasta que las defensas son destruidas."
+  },
+  {
+    "title": "Death Note",
+    "genre": "Animation",
+    "year": 2006,
+    "synopsis": "Un brillante estudiante de secundaria encuentra un cuaderno sobrenatural que mata a cualquier persona cuyo nombre sea escrito en él, decidiendo purgar el mundo de criminales."
+  },
+  {
+    "title": "The Boys",
+    "genre": "Action",
+    "year": 2019,
+    "synopsis": "Un grupo de vigilantes se propone derrocar a superhéroes corruptos que abusan de sus superpoderes y están patrocinados por una megacorporación sin escrúpulos."
+  },
+  {
+    "title": "Invincible",
+    "genre": "Animation",
+    "year": 2021,
+    "synopsis": "Un joven descubre que su padre es el superhéroe más poderoso del planeta, enfrentándose a revelaciones brutales sobre el legado de su familia alienígena."
+  },
+  {
+    "title": "Daredevil",
+    "genre": "Action",
+    "year": 2015,
+    "synopsis": "Un abogado ciego con sentidos hiperdesarrollados combate el crimen en las calles de Hell's Kitchen de noche mediante artes marciales y una férrea moral."
+  },
+  {
+    "title": "The Queen's Gambit",
+    "genre": "Drama",
+    "year": 2020,
+    "synopsis": "Una huérfana prodigio del ajedrez lucha contra las adicciones mientras asciende implacablemente hacia la cima del ranking mundial en la época de la Guerra Fría."
+  },
+  {
+    "title": "Ozark",
+    "genre": "Thriller",
+    "year": 2017,
+    "synopsis": "Un asesor financiero arrastra a su familia desde Chicago hasta los lagos de Misuri para blanquear dinero y saldar una deuda con un peligroso cartel mexicano."
+  },
+  {
+    "title": "The Office",
+    "genre": "Comedy",
+    "year": 2005,
+    "synopsis": "Falso documental sobre el día a día caótico y lleno de momentos incómodos de los empleados de una sucursal de una empresa distribuidora de papel."
+  },
+  {
+    "title": "Friends",
+    "genre": "Comedy",
+    "year": 1994,
+    "synopsis": "Las vivencias, romances y crisis cotidianas de un grupo de seis jóvenes amigos que residen en Nueva York y pasan horas en su cafetería favorita."
+  },
+  {
+    "title": "Brooklyn Nine-Nine",
+    "genre": "Comedy",
+    "year": 2013,
+    "synopsis": "Las disparatadas situaciones de un talentoso pero inmaduro detective de policía y su excéntrico equipo en una comisaría de Brooklyn bajo las órdenes de un capitán estricto."
+  },
+  {
+    "title": "It's Always Sunny in Philadelphia",
+    "genre": "Comedy",
+    "year": 2005,
+    "synopsis": "Cinco amigos egocéntricos y sociópatas regentan un pub irlandés en decadencia en Filadelfia, metiéndose siempre en tramas moralmente cuestionables."
+  },
+  {
+    "title": "Curb Your Enthusiasm",
+    "genre": "Comedy",
+    "year": 2000,
+    "synopsis": "El cocreador de Seinfeld interpreta una versión exagerada de sí mismo en Los Ángeles, lidiando con situaciones sociales incómodas y absurdas normas de cortesía."
+  },
+  {
+    "title": "HIMYM",
+    "genre": "Comedy",
+    "year": 2005,
+    "synopsis": "Un padre relata a sus hijos adolescentes la larga cadena de eventos y enredos románticos que vivió junto a su grupo de amigos en Nueva York hasta conocer a su madre."
+  },
+  {
+    "title": "Modern Family",
+    "genre": "Comedy",
+    "year": 2009,
+    "synopsis": "Tres ramas diferentes de una misma familia extensa en Los Ángeles se cruzan y comparten situaciones cotidianas caóticas grabadas en formato de falso documental."
+  },
+  {
+    "title": "Vikings",
+    "genre": "History",
+    "year": 2013,
+    "synopsis": "Las ambiciones y conquistas del legendario héroe vikingo Ragnar Lothbrok mientras desafía las tradiciones y explora nuevas tierras hacia el oeste."
+  },
+  {
+    "title": "The Last of Us",
+    "genre": "Sci-Fi",
+    "year": 2023,
+    "synopsis": "Un contrabandista endurecido escolta a una joven inmune a un hongo parásito mutado que ha diezmado a la civilización humana en un Estados Unidos postapocalíptico."
+  },
+  {
+    "title": "The Witcher",
+    "genre": "Fantasy",
+    "year": 2019,
+    "synopsis": "Un cazador de monstruos mutante viaja a través de un continente traicionero donde las personas suelen ser peores que las bestias que acechan en los bosques."
+  },
+  {
+    "title": "You",
+    "genre": "Thriller",
+    "year": 2018,
+    "synopsis": "Un brillante administrador de una librería se obsesiona enfermiza y peligrosamente con las mujeres que conoce, utilizando métodos digitales para manipular sus vidas."
+  },
+  {
+    "title": "Mind Over Murder",
+    "genre": "Documentary",
+    "year": 2022,
+    "synopsis": "Investigación sobre un trágico crimen real en un pueblo pequeño de Nebraska que destapa confesiones falsas, errores judiciales y memoria colectiva."
+  },
+  {
+    "title": "Monarch: Legacy of Monsters",
+    "genre": "Sci-Fi",
+    "year": 2023,
+    "synopsis": "Dos hermanos siguen los pasos de su padre para descubrir la conexión de su familia con la secreta organización científica conocida como Monarch."
+  },
+  {
+    "title": "Pluto",
+    "genre": "Animation",
+    "year": 2023,
+    "synopsis": "Un aclamado detective androide investiga una serie de asesinatos metódicos de humanos y robots de alta tecnología en un futuro futurista complejo."
+  },
+  {
+    "title": "Shogun",
+    "genre": "History",
+    "year": 2024,
+    "synopsis": "Un marinero inglés naufraga en las costas de Japón feudal, viéndose envuelto en las intrigas políticas y luchas por el poder del señor feudal Toranaga."
   }
 ]
