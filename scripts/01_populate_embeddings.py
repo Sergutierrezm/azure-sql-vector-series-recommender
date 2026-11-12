@@ -3,7 +3,6 @@ from pathlib import Path
 import pyodbc
 import requests
 import os
-
 from dotenv import load_dotenv
 
 # Carga las variables ocultas del archivo .env
@@ -32,12 +31,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 JSON_PATH = BASE_DIR / 'data' / 'shows.json'
 
 def get_embedding(text):
-    payload = {'model': OLLAMA_MODEL, 'prompt': text}
-    response = requests.post(OLLAMA_URL, json=payload)
-    if response.status_code == 200:
+    """Obtiene el vector embedding desde Ollama."""
+    try:
+        response = requests.post(OLLAMA_URL, json={'model': OLLAMA_MODEL, 'prompt': text}, timeout=10)
+        response.raise_for_status()
         return response.json().get('embedding')
-    else:
-        raise Exception(f'Error en Ollama: {response.text}')
+    except requests.exceptions.RequestException as e:
+        raise Exception(f'Error al conectar con Ollama: {e}')
 
 def main():
     if not JSON_PATH.exists():
@@ -48,36 +48,54 @@ def main():
         shows_data = json.load(f)
 
     print('🔌 Conectando a Azure SQL Database...')
-    conn = pyodbc.connect(CONN_STR)
-    cursor = conn.cursor()
+    
+    # Uso de 'with' para garantizar que la conexión se cierra aunque haya errores
+    try:
+        with pyodbc.connect(CONN_STR) as conn:
+            cursor = conn.cursor()
 
-    for show in shows_data:
-        title = show['title']
-        
-        # 1. Comprobamos si la serie ya existe en la base de datos
-        cursor.execute("SELECT COUNT(1) FROM dbo.Shows WHERE Title = ?", title)
-        exists = cursor.fetchone()[0]
+            # 1. OPTIMIZACIÓN N+1: Traer todos los títulos existentes en una sola consulta
+            cursor.execute("SELECT Title FROM dbo.Shows")
+            # Usamos un Set (conjunto) de Python porque las búsquedas en él son ultra rápidas (O(1))
+            existing_titles = {row[0] for row in cursor.fetchall()}
 
-        if exists > 0:
-            print(f"⏭️ La serie '{title}' ya existe en la base de datos. Saltando...")
-            continue
+            # Lista para guardar los registros nuevos y hacer la inserción en bloque
+            records_to_insert = []
 
-        # 2. Si no existe, generamos el embedding y la insertamos
-        print(f"🧠 Generando embedding para nueva serie: '{title}'...")
-        vector = get_embedding(show['synopsis'])
-        vector_json = json.dumps(vector)
+            for show in shows_data:
+                title = show['title']
+                
+                # Búsqueda instantánea en la memoria de Python, sin llamar a Azure
+                if title in existing_titles:
+                    print(f"⏭️ La serie '{title}' ya existe. Saltando...")
+                    continue
 
-        print(f"💾 Insertando '{title}' en Azure SQL...")
-        cursor.execute("""
-            INSERT INTO dbo.Shows (Title, Genre, ReleaseYear, Synopsis, EmbeddingJson)
-            VALUES (?, ?, ?, ?, ?)
-        """, title, show['genre'], show['year'], show['synopsis'], vector_json)
-        
-        conn.commit()
+                # 2. Generar el embedding
+                print(f"🧠 Generando embedding para nueva serie: '{title}'...")
+                vector = get_embedding(show['synopsis'])
+                vector_json = json.dumps(vector)
 
-    cursor.close()
-    conn.close()
-    print('✅ ¡Proceso de sincronización completado sin duplicados!')
+                # Preparamos el registro
+                records_to_insert.append((title, show['genre'], show['year'], show['synopsis'], vector_json))
+
+            # 3. OPTIMIZACIÓN DE TRANSACCIONES: Insertar todo de golpe si hay datos nuevos
+            if records_to_insert:
+                print(f"💾 Insertando {len(records_to_insert)} nuevas series en Azure SQL...")
+                cursor.executemany("""
+                    INSERT INTO dbo.Shows (Title, Genre, ReleaseYear, Synopsis, EmbeddingJson)
+                    VALUES (?, ?, ?, ?, ?)
+                """, records_to_insert)
+                
+                # Un solo commit al final ahorra muchísimos recursos en la base de datos
+                conn.commit()
+                print('✅ ¡Proceso de sincronización y guardado completado!')
+            else:
+                print('✅ No hay series nuevas que insertar. Todo está al día.')
+
+    except pyodbc.Error as e:
+        print(f"❌ Error en la base de datos: {e}")
+    except Exception as e:
+        print(f"❌ Error inesperado: {e}")
 
 if __name__ == '__main__':
     main()
