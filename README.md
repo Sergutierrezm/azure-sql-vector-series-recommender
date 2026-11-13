@@ -4,7 +4,7 @@ Motor de recomendación y búsqueda semántica en lenguaje natural que conecta u
 
 ---
 
-## 🏗️ Arquitectura del Sistema (v1.0.0 MVP)
+## 🏗️ Arquitectura del Sistema (v2.0.0 MVP)
 
 En esta primera versión (MVP), la generación de vectores de texto se realiza localmente y el cálculo de la **Similitud del Coseno** se procesa en el lado del cliente (Python) sobre los datos almacenados en Azure SQL.
 
