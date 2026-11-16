@@ -1,33 +1,31 @@
 # 🎬 azureSQLSeries — Búsqueda Semántica de Series
 
-Motor de recomendación y búsqueda semántica en lenguaje natural que conecta una base de datos relacional en la nube (**Azure SQL Database**) con procesamiento local de Inteligencia Artificial mediante **Ollama** (`nomic-embed-text`).
+**Un motor de recomendación en lenguaje natural que conecta Azure SQL Database con Inteligencia Artificial local (Ollama) para buscar series por su "vibra" o contexto.**
+
+![Arquitectura v2.0.0](docs/architecture-v2.jpeg)
 
 ---
 
-## 🏗️ Arquitectura del Sistema (v2.0.0 MVP)
+## 🛑 El problema
+Los buscadores tradicionales en bases de datos relacionales (con cláusulas `LIKE` o `Freetext`) son rígidos: si el usuario busca *"comedia ligera sobre la vida en la oficina"*, pero la base de datos dice *"Sitcom de trabajo"*, no hay resultados. Integrar motores de búsqueda semántica externos suele ser costoso y añade complejidad a la arquitectura. Necesitábamos una forma de buscar por "conceptos abstractos" aprovechando la seguridad y potencia de nuestra base de datos relacional existente.
 
-En esta primera versión (MVP), la generación de vectores de texto se realiza localmente y el cálculo de la **Similitud del Coseno** se procesa en el lado del cliente (Python) sobre los datos almacenados en Azure SQL.
+## ✨ Qué hace
+1. **Generación de Vectores:** Convierte catálogos de texto (sinopsis de series) en representaciones matemáticas (vectores de 768 dimensiones) usando IA local.
+2. **Búsqueda Semántica:** Permite buscar series usando lenguaje natural y devuelve las más afines.
+3. **Cálculo Optimizado (Pushdown Compute):** Realiza toda la carga matemática (Similitud del Coseno) directamente dentro de Azure SQL, evitando saturar la memoria de la aplicación cliente.
+4. **Auditoría Continua:** Mantiene un registro inmutable de todos los cambios en el catálogo mediante *System-Versioning* (Temporal Tables).
 
-![Arquitectura v1.0.0](docs/architecture-v2.jpeg)
+## 🏗️ Cómo lo construí
+El proyecto sigue un enfoque "Backend-first".
+- **Modelo de IA:** Ollama con `nomic-embed-text` ejecutándose localmente.
+- **Base de Datos:** Azure SQL Database (Serverless) alojando los vectores en formato JSON (`EmbeddingJson`).
+- **Procesamiento:** Lógica delegada a T-SQL mediante *Stored Procedures*, uso de `OPENJSON` y variables tipo Tabla para optimizar el rendimiento.
+- **Cliente:** Python (`pyodbc`, `requests`) para orquestar la comunicación ETL y las búsquedas.
 
----
-
-## 🛠️ Tecnologías Utilizadas
-
-* **Lenguaje:** Python 3.10+
-* **Base de Datos:** Azure SQL Database (Serverless)
-* **Auditoría:** System-Versioning (`dbo.ShowsHistory`)
-* **Modelo de IA:** Ollama — `nomic-embed-text` (Vectores de 768 dimensiones)
-* **Librerías Python:** `pyodbc`, `requests`, `python-dotenv`
-* **Conector DB:** ODBC Driver 18 for SQL Server
-
----
-
-## ⚙️ Configuración del Entorno
+## 🚀 Cómo probarlo
 
 ### 1. Variables de Entorno (`.env`)
-Crea un archivo `.env` en la raíz del proyecto (excluido en `.gitignore`):
-
+Crea un archivo `.env` en la raíz del proyecto:
 ```env
 AZURE_SERVER=sql-server-sergio-dp800.database.windows.net
 AZURE_DATABASE=TVShowDB
@@ -35,30 +33,24 @@ AZURE_USER=admiuser
 AZURE_PASSWORD=TuContraseñaSegura
 ```
 
-### 2. Instalación de Dependencias
+### 2. Instalación y Ejecución
 ```bash
+# Instalar dependencias
 pip install pyodbc requests python-dotenv
-```
 
----
-
-## 🚀 Ejecución del Proyecto
-
-### Fase 1: Ingesta y Vectorización (ETL)
-Extrae el catálogo desde `data/shows.json`, genera los embeddings con Ollama y los inserta en Azure SQL:
-```bash
+# 1. Ingestar el catálogo y vectorizar (ETL)
 python scripts/01_populate_embeddings.py
-```
 
-### Fase 2: Buscador Semántico (CLI)
-Genera el vector del prompt del usuario y busca las 3 series con mayor afinidad semántica:
-```bash
+# 2. Iniciar el buscador semántico (CLI)
 python scripts/02_semantic_search.py
 ```
 
----
+## 🧠 Aprendizajes
+- **De Python a T-SQL:** Al principio (v1), extraía los vectores de Azure a Python para calcular la similitud. Aprendí que delegar el cálculo a la base de datos (*Stored Procedures* en T-SQL) es infinitamente más eficiente.
+- **Optimización Matemática:** Calcular la Similitud del Coseno en SQL Server nativo requirió aprender a manejar `OPENJSON` y extraer pre-cálculos a variables (como la magnitud del vector) para reducir el tiempo de respuesta.
+- **Preparación DP-800:** Configurar *Temporal Tables* me enseñó cómo mantener trazabilidad y cumplir con normativas de auditoría de datos en la nube sin esfuerzo adicional de código.
 
-## 🗺️ Hoja de Ruta (Roadmap)
-
-- [x] **v1.0.0 (MVP):** Pipeline ETL completo, auditoría temporal `System-Versioning` y cálculo de similitud vectorial client-side (Python).
-- [ ] **v2.0.0 (Optimización DP-800):** Delegación del cálculo de Similitud del Coseno al motor de base de datos de Azure SQL mediante *Stored Procedures* en T-SQL.
+## 🗺️ Próximos pasos (Roadmap)
+- [x] **v1.0.0 (MVP):** Pipeline ETL y cálculo de similitud vectorial client-side (Python).
+- [x] **v2.0.0 (Optimización):** Delegación del cálculo de Similitud del Coseno a Azure SQL.
+- [ ] **v3.0.0 (Full-Stack):** Evolución a aplicación web completa con Backend modular en **FastAPI** y Frontend minimalista en **Angular**.
