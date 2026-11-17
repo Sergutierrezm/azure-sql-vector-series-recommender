@@ -1,56 +1,78 @@
 # 🎬 azureSQLSeries — Búsqueda Semántica de Series
 
-**Un motor de recomendación en lenguaje natural que conecta Azure SQL Database con Inteligencia Artificial local (Ollama) para buscar series por su "vibra" o contexto.**
+**Un motor de recomendación Full-Stack Cloud Native que conecta Azure SQL Database con Azure AI Foundry para buscar series por su "vibra" o contexto mediante IA de grado empresarial.**
 
-![Arquitectura v2.0.0](docs/architecture-v2.jpeg)
+![Arquitectura v4.0.0](docs/architecture-v4.jpeg)
 
 ---
 
 ## 🛑 El problema
-Los buscadores tradicionales en bases de datos relacionales (con cláusulas `LIKE` o `Freetext`) son rígidos: si el usuario busca *"comedia ligera sobre la vida en la oficina"*, pero la base de datos dice *"Sitcom de trabajo"*, no hay resultados. Integrar motores de búsqueda semántica externos suele ser costoso y añade complejidad a la arquitectura. Necesitábamos una forma de buscar por "conceptos abstractos" aprovechando la seguridad y potencia de nuestra base de datos relacional existente.
+Los buscadores tradicionales en bases de datos relacionales (con cláusulas `LIKE` o `Freetext`) son rígidos: si el usuario busca *"comedia ligera sobre la vida en la oficina"*, pero la base de datos dice *"Sitcom de trabajo"*, no hay resultados. Las primeras iteraciones de motores semánticos resolvían parte del problema, pero dependían de hardware local (Ollama) y sufrían de "miopía de contexto" (ej. no asociar *Game of Thrones* con "castillos" si la sinopsis no incluía la palabra explícita). Necesitábamos una arquitectura 100% en la nube, escalable, con una interfaz web real y enriquecimiento de datos para lograr una precisión absoluta.
 
 ## ✨ Qué hace
-1. **Generación de Vectores:** Convierte catálogos de texto (sinopsis de series) en representaciones matemáticas (vectores de 768 dimensiones) usando IA local.
-2. **Búsqueda Semántica:** Permite buscar series usando lenguaje natural y devuelve las más afines.
-3. **Cálculo Optimizado (Pushdown Compute):** Realiza toda la carga matemática (Similitud del Coseno) directamente dentro de Azure SQL, evitando saturar la memoria de la aplicación cliente.
-4. **Auditoría Continua:** Mantiene un registro inmutable de todos los cambios en el catálogo mediante *System-Versioning* (Temporal Tables).
+1. **Data Enrichment & Ingesta (1536D):** Concatena metadatos clave (Título, Género, Año y Sinopsis) antes de vectorizarlos con **Azure OpenAI (`text-embedding-3-small`)**, generando representaciones matemáticas ultraprecisas de 1536 dimensiones.
+2. **Búsqueda Semántica Full-Stack:** Permite buscar series en lenguaje natural desde una interfaz web moderna y reactiva, devolviendo resultados ordenados por porcentaje de afinidad.
+3. **Cálculo Optimizado (Pushdown Compute):** Realiza toda la carga matemática (Similitud del Coseno) directamente dentro de Azure SQL mediante *Stored Procedures*, recibiendo vectores desde la API sin saturar la memoria del servidor backend.
+4. **Desacoplamiento Total:** El Frontend (Angular) consume un contrato de datos estricto (`ShowItem`), siendo completamente agnóstico al motor de IA o base de datos que opera en el Backend (FastAPI).
 
 ## 🏗️ Cómo lo construí
-El proyecto sigue un enfoque "Backend-first".
-- **Modelo de IA:** Ollama con `nomic-embed-text` ejecutándose localmente.
-- **Base de Datos:** Azure SQL Database (Serverless) alojando los vectores en formato JSON (`EmbeddingJson`).
-- **Procesamiento:** Lógica delegada a T-SQL mediante *Stored Procedures*, uso de `OPENJSON` y variables tipo Tabla para optimizar el rendimiento.
-- **Cliente:** Python (`pyodbc`, `requests`) para orquestar la comunicación ETL y las búsquedas.
+El proyecto sigue una arquitectura Full-Stack Cloud Native:
+- **Frontend:** Angular v21 (Standalone Components) para un renderizado reactivo y tipado estricto.
+- **Backend (API):** Python con **FastAPI**, orquestando la comunicación asíncrona y gestionando políticas de CORS.
+- **Modelo de IA:** Azure AI Foundry (OpenAI `text-embedding-3-small`) a través del SDK oficial de Python.
+- **Base de Datos:** Azure SQL Database (Serverless) alojando los vectores y delegando la lógica matemática a T-SQL mediante `OPENJSON` y *Stored Procedures*.
+- **Seguridad y Auditoría:** Autenticación local mediante `.env` y control de cambios en la base de datos con *System-Versioning* (Temporal Tables).
 
 ## 🚀 Cómo probarlo
 
 ### 1. Variables de Entorno (`.env`)
-Crea un archivo `.env` en la raíz del proyecto:
+Crea un archivo `.env` en la raíz del backend:
 ```env
 AZURE_SERVER=sql-server-sergio-dp800.database.windows.net
 AZURE_DATABASE=TVShowDB
 AZURE_USER=admiuser
 AZURE_PASSWORD=TuContraseñaSegura
+
+AZURE_OPENAI_ENDPOINT=https://tu-recurso-openai.openai.azure.com/
+AZURE_OPENAI_API_KEY=TuClaveDeAPI
 ```
 
 ### 2. Instalación y Ejecución
-```bash
-# Instalar dependencias
-pip install pyodbc requests python-dotenv
 
-# 1. Ingestar el catálogo y vectorizar (ETL)
+**Paso 1: Backend y ETL (Python/FastAPI)**
+```bash
+# Navegar al backend, crear entorno virtual e instalar dependencias
+cd backend
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+pip install fastapi uvicorn pyodbc openai python-dotenv
+
+# Opcional: Re-ingestar catálogo con Data Enrichment (borrar BD primero)
 python scripts/01_populate_embeddings.py
 
-# 2. Iniciar el buscador semántico (CLI)
-python scripts/02_semantic_search.py
+# Iniciar la API REST
+uvicorn main:app --reload
 ```
 
+**Paso 2: Frontend (Angular)**
+```bash
+# En una nueva terminal, navegar al frontend
+cd frontend
+
+# Instalar dependencias e iniciar el servidor de desarrollo
+npm install
+ng serve
+```
+Abre `http://localhost:4200` en tu navegador para interactuar con la aplicación.
+
 ## 🧠 Aprendizajes
-- **De Python a T-SQL:** Al principio (v1), extraía los vectores de Azure a Python para calcular la similitud. Aprendí que delegar el cálculo a la base de datos (*Stored Procedures* en T-SQL) es infinitamente más eficiente.
-- **Optimización Matemática:** Calcular la Similitud del Coseno en SQL Server nativo requirió aprender a manejar `OPENJSON` y extraer pre-cálculos a variables (como la magnitud del vector) para reducir el tiempo de respuesta.
-- **Preparación DP-800:** Configurar *Temporal Tables* me enseñó cómo mantener trazabilidad y cumplir con normativas de auditoría de datos en la nube sin esfuerzo adicional de código.
+- **El Poltergeist de los Vectores (Dimension Mismatch):** Al migrar de Ollama (768D) a OpenAI (1536D), aprendí que mezclar dimensionalidades en la base de datos genera resultados ruidosos e incoherentes. La limpieza de la BD y la idempotencia del pipeline ETL son vitales.
+- **El poder del Data Enrichment:** Los modelos LLM son rehenes del texto proporcionado. Inyectar el género y el título explícitamente en el texto base de la vectorización elevó drásticamente la precisión para búsquedas conceptuales (ej. resolver el puente semántico entre "magia/castillos" y la serie *The Witcher*).
+- **Contratos de API Desacoplados:** Migrar todo el motor de IA subyacente de local a Cloud sin tener que alterar una sola línea de código en Angular demostró el inmenso valor de las arquitecturas orientadas a servicios (SOA).
+- **Preparación DP-800:** Diseñar flujos de trabajo con Azure OpenAI y delegar procesamiento analítico-matemático a Azure SQL han sido prácticas directas para dominar el diseño de soluciones de IA en bases de datos relacionales Microsoft.
 
 ## 🗺️ Próximos pasos (Roadmap)
-- [x] **v1.0.0 (MVP):** Pipeline ETL y cálculo de similitud vectorial client-side (Python).
-- [x] **v2.0.0 (Optimización):** Delegación del cálculo de Similitud del Coseno a Azure SQL.
-- [ ] **v3.0.0 (Full-Stack):** Evolución a aplicación web completa con Backend modular en **FastAPI** y Frontend minimalista en **Angular**.
+- [x] **v1.0.0 (MVP):** Pipeline ETL y cálculo de similitud vectorial client-side (Python/Ollama local).
+- [x] **v2.0.0 (Optimización):** Delegación del cálculo de Similitud del Coseno a Azure SQL (Pushdown Compute).
+- [x] **v3.0.0 (Full-Stack):** Evolución a aplicación web completa con Backend modular en **FastAPI** y Frontend reactivo en **Angular**.
+- [x] **v4.0.0 (Cloud Native):** Migración a **Azure OpenAI (`text-embedding-3-small`)**, adopción de 1536 dimensiones e implementación de *Data Enrichment* en el ETL.
