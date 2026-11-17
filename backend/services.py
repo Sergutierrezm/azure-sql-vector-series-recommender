@@ -1,25 +1,32 @@
 import json
 import pyodbc
-import requests
 from fastapi import HTTPException
-from backend.config import CONN_STR, OLLAMA_URL, OLLAMA_MODEL
+from openai import AzureOpenAI
 from backend.schemas import ShowItem
 
+# Fíjate que hemos cambiado las variables importadas desde config
+from backend.config import CONN_STR, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY
+
+# Inicializamos el cliente de IA de Microsoft para el backend
+ai_client = AzureOpenAI(
+    api_key=AZURE_OPENAI_API_KEY,
+    api_version="2024-02-15-preview",
+    azure_endpoint=AZURE_OPENAI_ENDPOINT
+)
+
 def generate_query_embedding(query_text: str) -> list[float]:
-    """Genera el vector en Ollama usando el prefijo search_query de nomic-embed-text."""
-    formatted_prompt = f"search_query: {query_text.strip()}"
+    """Genera el vector en Azure OpenAI (1536D) eliminando el motor local."""
     try:
-        response = requests.post(
-            OLLAMA_URL,
-            json={"model": OLLAMA_MODEL, "prompt": formatted_prompt},
-            timeout=10
+        # OpenAI no necesita prefijos como 'search_query:'
+        response = ai_client.embeddings.create(
+            input=query_text.strip(),
+            model="text-embedding-3-small"
         )
-        response.raise_for_status()
-        return response.json().get("embedding")
-    except requests.exceptions.RequestException as e:
+        return response.data[0].embedding
+    except Exception as e:
         raise HTTPException(
             status_code=503,
-            detail=f"El motor de IA local (Ollama) no responde: {str(e)}"
+            detail=f"El servicio de Azure OpenAI no responde: {str(e)}"
         )
 
 def get_all_catalog_shows() -> list[ShowItem]:

@@ -8,8 +8,8 @@ AZURE_DATABASE = os.getenv('AZURE_DATABASE')
 AZURE_USER = os.getenv('AZURE_USER')
 AZURE_PASSWORD = os.getenv('AZURE_PASSWORD')
 
-OLLAMA_URL = os.getenv('OLLAMA_URL', 'http://localhost:11434/api/embeddings')
-OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'nomic-embed-text')
+AZURE_OPENAI_ENDPOINT = os.getenv('AZURE_OPENAI_ENDPOINT')
+AZURE_OPENAI_API_KEY = os.getenv('AZURE_OPENAI_API_KEY')
 
 CONN_STR = (
     f'DRIVER={{ODBC Driver 18 for SQL Server}};'

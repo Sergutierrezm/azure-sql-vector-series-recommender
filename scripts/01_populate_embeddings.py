@@ -1,21 +1,23 @@
 import json
 from pathlib import Path
 import pyodbc
-import requests
 import os
 from dotenv import load_dotenv
+from openai import AzureOpenAI
 
 # Carga las variables ocultas del archivo .env
 load_dotenv()
 
-# --- Configuración de Azure SQL y Ollama ---
+# --- Configuración de Azure SQL ---
 AZURE_SERVER = os.getenv('AZURE_SERVER')
 AZURE_DATABASE = os.getenv('AZURE_DATABASE')
 AZURE_USER = os.getenv('AZURE_USER')
 AZURE_PASSWORD = os.getenv('AZURE_PASSWORD')
 
-OLLAMA_URL = 'http://localhost:11434/api/embeddings'
-OLLAMA_MODEL = 'nomic-embed-text' 
+# --- Configuración de Azure OpenAI (Reemplaza a Ollama) ---
+AZURE_OPENAI_ENDPOINT = os.getenv('AZURE_OPENAI_ENDPOINT')
+AZURE_OPENAI_API_KEY = os.getenv('AZURE_OPENAI_API_KEY')
+DEPLOYMENT_NAME = "text-embedding-3-small"
 
 CONN_STR = (
     f'DRIVER={{ODBC Driver 18 for SQL Server}};'
@@ -26,18 +28,27 @@ CONN_STR = (
     f'Encrypt=yes;TrustServerCertificate=no;'
 )
 
-# Ruta relativa al archivo JSON desde la carpeta scripts/
+# Inicializamos el cliente de IA de Microsoft
+ai_client = AzureOpenAI(
+    api_key=AZURE_OPENAI_API_KEY,
+    api_version="2024-02-15-preview",
+    azure_endpoint=AZURE_OPENAI_ENDPOINT
+)
+
+# Ruta relativa al archivo JSON
 BASE_DIR = Path(__file__).resolve().parent.parent
 JSON_PATH = BASE_DIR / 'data' / 'shows.json'
 
 def get_embedding(text):
-    """Obtiene el vector embedding desde Ollama."""
+    """Obtiene el vector embedding (1536D) desde Azure OpenAI."""
     try:
-        response = requests.post(OLLAMA_URL, json={'model': OLLAMA_MODEL, 'prompt': text}, timeout=10)
-        response.raise_for_status()
-        return response.json().get('embedding')
-    except requests.exceptions.RequestException as e:
-        raise Exception(f'Error al conectar con Ollama: {e}')
+        response = ai_client.embeddings.create(
+            input=text,
+            model=DEPLOYMENT_NAME
+        )
+        return response.data[0].embedding
+    except Exception as e:
+        raise Exception(f'Error al conectar con Azure OpenAI: {e}')
 
 def main():
     if not JSON_PATH.exists():
@@ -49,36 +60,35 @@ def main():
 
     print('🔌 Conectando a Azure SQL Database...')
     
-    # Uso de 'with' para garantizar que la conexión se cierra aunque haya errores
     try:
         with pyodbc.connect(CONN_STR) as conn:
             cursor = conn.cursor()
 
-            # 1. OPTIMIZACIÓN N+1: Traer todos los títulos existentes en una sola consulta
             cursor.execute("SELECT Title FROM dbo.Shows")
-            # Usamos un Set (conjunto) de Python porque las búsquedas en él son ultra rápidas (O(1))
             existing_titles = {row[0] for row in cursor.fetchall()}
 
-            # Lista para guardar los registros nuevos y hacer la inserción en bloque
             records_to_insert = []
 
             for show in shows_data:
                 title = show['title']
                 
-                # Búsqueda instantánea en la memoria de Python, sin llamar a Azure
                 if title in existing_titles:
                     print(f"⏭️ La serie '{title}' ya existe. Saltando...")
                     continue
 
-                # 2. Generar el embedding
-                print(f"🧠 Generando embedding para nueva serie: '{title}'...")
-                vector = get_embedding(show['synopsis'])
+                print(f"🧠 Generando embedding Azure AI enriquecido para: '{title}'...")
+                
+                # --- DATA ENRICHMENT ---
+                # Unimos todos los metadatos para darle un contexto perfecto a OpenAI
+                texto_enriquecido = f"Título: {title}. Género: {show['genre']}. Año: {show['year']}. Sinopsis: {show['synopsis']}"
+                
+                # Generamos el vector basándonos en el texto enriquecido, no solo en la sinopsis
+                vector = get_embedding(texto_enriquecido)
                 vector_json = json.dumps(vector)
 
-                # Preparamos el registro
+                # La inserción en base de datos no cambia, guardamos la sinopsis limpia para Angular
                 records_to_insert.append((title, show['genre'], show['year'], show['synopsis'], vector_json))
 
-            # 3. OPTIMIZACIÓN DE TRANSACCIONES: Insertar todo de golpe si hay datos nuevos
             if records_to_insert:
                 print(f"💾 Insertando {len(records_to_insert)} nuevas series en Azure SQL...")
                 cursor.executemany("""
@@ -86,9 +96,8 @@ def main():
                     VALUES (?, ?, ?, ?, ?)
                 """, records_to_insert)
                 
-                # Un solo commit al final ahorra muchísimos recursos en la base de datos
                 conn.commit()
-                print('✅ ¡Proceso de sincronización y guardado completado!')
+                print('✅ ¡Proceso de sincronización completado con éxito!')
             else:
                 print('✅ No hay series nuevas que insertar. Todo está al día.')
 
@@ -99,4 +108,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
