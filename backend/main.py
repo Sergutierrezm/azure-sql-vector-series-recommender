@@ -14,9 +14,10 @@ app = FastAPI(
     version="3.0.0"
 )
 
+# 2. Le damos permiso a Angular para conectarse
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:4200"], # El puerto de tu Angular
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
