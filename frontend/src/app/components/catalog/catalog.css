@@ -1,0 +1,9 @@
+.catalog-title { color: #555; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+.loading { text-align: center; color: #0078D4; font-weight: bold; }
+.results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+.card { border: 1px solid #eaeaea; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.card-header h3 { margin: 0; color: #333; font-size: 1.1em; }
+.card-header span { color: #666; font-size: 0.9em; }
+.genre { display: inline-block; background: #eee; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; margin-bottom: 10px; }
+.synopsis { color: #555; line-height: 1.4; font-size: 0.9em; margin: 0; }

@@ -1,0 +1,38 @@
+<div class="search-container">
+  <h2>Buscador Semántico con IA</h2>
+  <p>Describe qué tipo de serie te apetece ver hoy:</p>
+
+  <div class="search-box">
+    <input 
+      type="text" 
+      [(ngModel)]="searchQuery" 
+      placeholder="Ej: una serie de fantasía épica con dragones y traiciones..."
+      (keyup.enter)="onSearch()"
+    />
+    <button (click)="onSearch()" [disabled]="isLoading">
+      {{ isLoading ? 'Pensando...' : 'Buscar' }}
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading">Calculando vectores en Azure SQL... 🧠</div>
+  }
+
+  <div class="results-grid">
+    @for (show of results; track show.id) {
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ show.title }} <span>({{ show.release_year }})</span></h3>
+          <span class="badge">{{ show.affinity_pct }}% Afinidad</span>
+        </div>
+        <span class="genre">{{ show.genre }}</span>
+        <p class="synopsis">{{ show.synopsis }}</p>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Añade esto al final del archivo -->
+  @if (!hasSearched) {
+    <app-catalog></app-catalog>
+  }
