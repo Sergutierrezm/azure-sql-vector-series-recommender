@@ -1,0 +1,14 @@
+.search-container { max-width: 800px; margin: 0 auto; font-family: system-ui, sans-serif; }
+.search-box { display: flex; gap: 10px; margin-bottom: 30px; }
+input { flex: 1; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; }
+button { padding: 12px 24px; font-size: 16px; background-color: #0078D4; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+button:disabled { background-color: #999; }
+.loading { text-align: center; color: #0078D4; font-weight: bold; margin: 20px 0; }
+.results-grid { display: flex; flex-direction: column; gap: 15px; }
+.card { border: 1px solid #eaeaea; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.card-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+.card-header h3 { margin: 0; color: #333; }
+.card-header span { font-weight: normal; color: #666; font-size: 0.9em; }
+.badge { background-color: #e1f0fa; color: #0078D4; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85em !important; }
+.genre { display: inline-block; background: #eee; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; margin-bottom: 10px; }
+.synopsis { color: #555; line-height: 1.5; margin: 0; }

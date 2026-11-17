@@ -1,0 +1,19 @@
+<div class="catalog-container">
+  <h3 class="catalog-title">📺 Catálogo Completo en Azure SQL</h3>
+  
+  @if (isLoading) {
+    <div class="loading">Cargando base de datos...</div>
+  }
+
+  <div class="results-grid">
+    @for (show of catalog; track show.id) {
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ show.title }} <span>({{ show.release_year }})</span></h3>
+        </div>
+        <span class="genre">{{ show.genre }}</span>
+        <p class="synopsis">{{ show.synopsis }}</p>
+      </div>
+    }
+  </div>
+</div>
